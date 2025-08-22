@@ -1,0 +1,54 @@
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+
+# Virtual environment
+venv/
+.env/
+.env.*
+
+# IDE / Editor files
+.vscode/
+.idea/
+
+# Logs and outputs
+*.log
+*.out
+*.err
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python build / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Model files (large / generated weights)
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+*.h5
+
+# Gradio cache
+.gradio/
+
+# Firebase cache / configs
+*.firebase/
+firebase-debug.log
+
+# Test cache
+.pytest_cache/
+.coverage
+htmlcov/

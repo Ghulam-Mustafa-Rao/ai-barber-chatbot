@@ -1,0 +1,14 @@
+firebase-admin==6.5.0
+pytz==2024.1
+transformers==4.42.4
+datasets==2.20.0
+accelerate==0.32.1
+peft==0.11.1
+torch==2.3.1
+sentencepiece==0.2.0
+bitsandbytes==0.43.1
+hf_xet
+gradio==5.42.0
+huggingface_hub==0.34.4
+evaluate==0.4.5
+scikit-learn==1.7.1
