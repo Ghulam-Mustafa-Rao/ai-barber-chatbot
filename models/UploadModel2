@@ -1,0 +1,29 @@
+from huggingface_hub import HfApi, HfFolder, Repository, create_repo, upload_folder
+import os
+from huggingface_hub import login
+from dotenv import load_dotenv
+
+# Load .env file (make sure .env is in project root)
+token = os.getenv("HF_TOKEN_LOGIN")
+
+if not token:
+    # Try loading again (or fallback)
+    load_dotenv()
+    token = os.getenv("HF_TOKEN_LOGIN")
+
+if not token:
+    raise ValueError("HF_TOKEN_LOGIN not found. Please set it in your .env file.")
+
+# Login to HuggingFace
+login(token)
+
+modelId = os.getenv("MODEL_ID2")
+# Create repo if it doesn’t exist yet
+create_repo(modelId, private=False, exist_ok=True)
+
+# Upload the local folder "models/modelname"
+upload_folder(
+    folder_path="textgen_model",
+    repo_id=modelId,
+    repo_type="model"
+)

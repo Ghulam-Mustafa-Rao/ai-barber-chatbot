@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from huggingface_hub import InferenceClient
 import os
 from dotenv import load_dotenv
+
 # Firebase utils
 try:
     from Firebase import firebase_utils as fu
@@ -16,6 +17,8 @@ except ImportError:
     import firebase_utils as fu
 
 # ---------------- CONFIG ----------------
+
+
 MODEL_PATH = "GMR01231/Barber_Intent_Bot"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -196,38 +199,20 @@ def regex_fallback(message: str):
 
 # ---------------- MODEL INFERENCE (returns REPLY STRING) ----------------
 
+from transformers import AutoModelForCausalLM
+MODEL_ID2 = "GMR01231/Barber_Text_Gen_Bot"
 
-
-# Initialize once (requires HF token in your env: HUGGINGFACEHUB_API_TOKEN)
-
-
-# Check if HF_TOKEN is already set in environment
-hf_token = os.getenv("HF_TOKEN")
-
-if not hf_token:
-    # Try loading from .env if not found
-    load_dotenv()
-    hf_token = os.getenv("HF_TOKEN")
-
-# Final check
-if not hf_token:
-    raise EnvironmentError(
-        "❌ Hugging Face API token not found. Please set HF_TOKEN or HUGGINGFACEHUB_API_TOKEN "
-        "in your environment or in a .env file."
-    )
-else:
-    print("✅ Hugging Face token loaded successfully.")
-
-
-# Initialize client with token + model
-hf_client = InferenceClient(
-    model="mistralai/Mistral-7B-Instruct-v0.2",
-    token=hf_token
-)
+# Load tokenizer and model directly from Hugging Face Hub
+print("Loading Barber_Text_Gen_Bot from Hugging Face...")
+tokenizer_NLP = AutoTokenizer.from_pretrained(MODEL_ID2)
+model_NLP = AutoModelForCausalLM.from_pretrained(MODEL_ID2, device_map="auto")
+model_NLP.eval()
+model_NLP.to(DEVICE)
+print("✅ Barber_Text_Gen_Bot ready")
 
 def make_response_natural(user_message: str, bot_message: str) -> str:
     """
-    Take the system response and rephrase it in a natural conversational way.
+    Rephrase the system response into a natural conversational way using Hugging Face model.
     """
     prompt = f"""
 You are a friendly AI barber assistant.
@@ -241,16 +226,19 @@ Do NOT wrap the reply in quotes.
 Only output the final reply text.
 """
 
-    # Use chat completion (Mistral supports conversational API, not raw text_generation)
-    response = hf_client.chat.completions.create(
-        model="mistralai/Mistral-7B-Instruct-v0.2",
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=150,
-        temperature=0.7
-    )
+    inputs = tokenizer_NLP(prompt, return_tensors="pt").to(DEVICE)
+    with torch.no_grad():
+        outputs = model_NLP.generate(
+            **inputs,
+            max_new_tokens=150,
+            do_sample=True,
+            temperature=0.7,
+            pad_token_id=tokenizer_NLP.eos_token_id
+        )
 
-    return response.choices[0].message.content
-
+    reply_text = tokenizer_NLP.decode(outputs[0], skip_special_tokens=True)
+    reply_text = reply_text.replace(prompt, "").strip()
+    return reply_text
 
 
 def predict_intent(text: str) -> str:
