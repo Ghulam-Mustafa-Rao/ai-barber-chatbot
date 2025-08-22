@@ -34,22 +34,25 @@ dist/
 build/
 .eggs/
 
+
+# Ignore big model weights locally
 # Model files (large / generated weights)
-*.pt
-*.pth
-*.ckpt
-*.bin
-*.onnx
-*.h5
+models/*/check*
+models/*/pytorch_model.bin
+models/*/model.safetensors
+models/*/tf_model.h5
+models/*/flax_model.msgpack
 
 # Gradio cache
 .gradio/
 
 # Firebase cache / configs
-*.firebase/
 firebase-debug.log
 
 # Test cache
 .pytest_cache/
 .coverage
 htmlcov/
+
+# temp folder to upload app on huggingface
+tmp_hf_space
