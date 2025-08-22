@@ -13,7 +13,7 @@ license: apache-2.0
 # 💈 AI Barber Chat Bot
 
 An AI-powered chatbot for a barber shop, built with:
-- **LoRA fine-tuned Flan-T5** for intent recognition
+- **fine-tuned Falconsai/intent_classification** for intent recognition
 - **Firebase Firestore** for appointment storage
 - **Gradio** for the chat UI
 
